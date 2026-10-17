@@ -1,6 +1,6 @@
 {
   "name": "sagrario-asistencias",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Registro de asistencia de catequesis para Windows",
   "author": "Sagrario",
   "private": true,
@@ -12,15 +12,45 @@
     "dist": "electron-builder --win nsis --x64 --publish never",
     "release": "electron-builder --win nsis --x64 --publish always"
   },
-  "dependencies": { "electron-updater": "6.8.9" },
-  "devDependencies": { "electron": "44.8.0", "electron-builder": "26.15.3", "playwright": "1.58.2" },
+  "dependencies": {
+    "electron-updater": "6.8.9"
+  },
+  "devDependencies": {
+    "electron": "44.8.0",
+    "electron-builder": "26.15.3",
+    "playwright": "1.58.2"
+  },
   "build": {
     "appId": "mx.sagrario.asistencias",
     "productName": "Sagrario Asistencias",
-    "directories": { "output": "release" },
-    "files": ["desktop/**/*", "src/**/*", "assets/**/*", "data/*.json", "package.json"],
-    "win": { "target": "nsis", "icon": "assets/icon.ico", "artifactName": "Sagrario-Asistencias-Setup-${version}.${ext}" },
-    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "Sagrario Asistencias", "deleteAppDataOnUninstall": false },
-    "publish": { "provider": "github", "owner": "sistemascalc", "repo": "sagrario-asistencias", "releaseType": "release" }
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "src/**/*",
+      "assets/**/*",
+      "data/*.json",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico",
+      "artifactName": "Sagrario-Asistencias-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Sagrario Asistencias",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "sistemascalc",
+      "repo": "sagrario-asistencias",
+      "releaseType": "release"
+    }
   }
 }

@@ -75,6 +75,8 @@ async function main(){
   assert.equal(JSON.parse(fs.readFileSync(backupPath,'utf8')).lists.length,368);
   await page.getByRole('button',{name:'Buscar actualizaciones',exact:true}).click();
   await page.getByText('Las actualizaciones se consultan desde la aplicación instalada.',{exact:true}).waitFor();
+  assert.equal(await page.getByRole('button',{name:'Descargar',exact:true}).isVisible(),false);
+  assert.equal(await page.getByRole('button',{name:'Reiniciar e instalar',exact:true}).isVisible(),false);
   await page.screenshot({path:path.join(root,'tmp','app-settings.png')});
   assert.deepEqual(errors,[]);
   console.log('PASS: 265 imported records; exact number search; both attendance marks; editing and daily notes; restart persistence; new date isolation; 366-day leap year; PDF, CSV, backup and update controls.');
