@@ -1,0 +1,35 @@
+name: Windows installer
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node node_modules/electron/install.js
+      - run: pnpm test
+      - name: Keep personal records out of public releases
+        run: node -e "if(require('fs').existsSync('data/seed.json'))throw Error('Personal seed data must not be published');"
+      - name: Publish installer and update metadata
+        run: pnpm release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sagrario-Windows
+          path: |
+            release/*.exe
+            release/*.blockmap
+            release/latest.yml

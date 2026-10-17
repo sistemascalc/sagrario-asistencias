@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+tmp/
+data/seed.json
+data/*.pdf
+*.log
+.env*
+!data/seed.example.json

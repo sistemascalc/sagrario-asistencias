@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Sagrario · Asistencias</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">✦</div><div>SAGRARIO<small>Comunidad que acompaña</small></div></div>
+    <div class="nav-caption">CATEQUESIS</div>
+    <nav aria-label="Navegación principal">
+      <button data-view="attendance" class="nav-item active"><span>☑</span> Asistencia <i class="nav-dot"></i></button>
+      <button data-view="calendar" class="nav-item"><span>▦</span> Listas y calendario</button>
+      <button data-view="settings" class="nav-item"><span>⚙</span> Ajustes y respaldos</button>
+    </nav>
+    <div class="sidebar-card"><div class="cross">✝</div><h3>Cada encuentro cuenta.</h3><p>Un espacio para acompañar<br>el camino de tu comunidad.</p></div>
+    <div class="sidebar-bottom"><span class="online-dot"></span> Disponible sin internet<small id="version">Sagrario Asistencias</small></div>
+  </aside>
+  <main>
+    <header class="topbar"><div><span class="breadcrumb">Sagrario</span><span class="slash">/</span><span id="crumb">Registro de asistencia</span></div><div class="save-state" id="save-state" role="status"><span>●</span> Guardado en esta computadora</div></header>
+    <div id="workspace" class="workspace"><div class="loading">Abriendo tus listas…</div></div>
+  </main>
+  <dialog id="modal"><div id="modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body></html>

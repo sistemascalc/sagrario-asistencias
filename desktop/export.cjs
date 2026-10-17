@@ -1,0 +1,11 @@
+const fullName=p=>[p.givenNames,p.paternalSurname,p.maternalSurname].filter(Boolean).join(' ');
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function csv(list) {
+  const cell=value=>'"'+String(value).replace(/^[=+@\-\t\r]/,"'$&").replaceAll('"','""')+'"';
+  return '\uFEFF'+[['Fecha','Número','Confirmando','Padrino o madrina','Asistencia confirmando','Asistencia padrino','Observaciones del registro','Notas del día'],...list.people.map(p=>{const a=list.attendance[p.id];return [list.date,p.id,fullName(p),p.sponsor,a.confirmand?'Sí':'No',a.sponsor?'Sí':'No',p.notes,a.notes];})].map(r=>r.map(cell).join(',')).join('\r\n');
+}
+function printHTML(list) {
+  const e=escapeHTML, entries=Object.values(list.attendance);
+  return `<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><style>@page{size:letter landscape;margin:12mm}body{font:10px 'Segoe UI',sans-serif;color:#142949}h1{font-size:23px;margin:0 0 6px}p{margin:4px 0 14px}table{border-collapse:collapse;width:100%;table-layout:fixed}thead{display:table-header-group}th{background:#152e52;color:white;text-align:left}td,th{padding:7px;border:1px solid #d2dbe7;overflow-wrap:anywhere}tr{break-inside:avoid}tbody tr:nth-child(even){background:#f3f6fa}.num{width:32px}.mark{width:50px;text-align:center;font-size:14px}.note{width:22%}</style></head><body><h1>${e(list.title)}</h1><p>Lista de asistencia · ${e(list.date.split('-').reverse().join('/'))} &nbsp; | &nbsp; ${list.people.length} registros · ${entries.filter(a=>a.confirmand).length} confirmandos presentes · ${entries.filter(a=>a.sponsor).length} padrinos presentes</p><table><thead><tr><th class="num">Núm.</th><th>Confirmando</th><th class="mark">Conf.</th><th>Padrino / madrina</th><th class="mark">Padr.</th><th class="note">Observaciones y notas</th></tr></thead><tbody>${list.people.map(p=>{const a=list.attendance[p.id];return `<tr><td>${p.id}</td><td>${e(fullName(p))}</td><td class="mark">${a.confirmand?'✓':'□'}</td><td>${e(p.sponsor)}</td><td class="mark">${a.sponsor?'✓':'□'}</td><td>${e([p.notes,a.notes].filter(Boolean).join(' · '))}</td></tr>`;}).join('')}</tbody></table></body></html>`;
+}
+module.exports={csv,printHTML,fullName};
