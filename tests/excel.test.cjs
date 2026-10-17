@@ -37,6 +37,13 @@ test('invalid and duplicate IDs, missing names and long text prevent partial imp
   assert.ok(result.errors.some(e=>e.includes('se repite')));assert.ok(result.errors.some(e=>e.includes('falta el nombre')));
   assert.ok(result.errors.some(e=>e.includes('entero')));assert.ok(result.errors.some(e=>e.includes('demasiado largo')));
 });
+test('CSV preserves Spanish accents with UTF-8 without BOM, UTF-16 and legacy Windows encoding',t=>{
+  const dir=setup(t),content='Número;Nombre;Padrino\r\n1;José Muñoz;María';
+  for(const [name,buffer] of [['utf8',Buffer.from(content,'utf8')],['utf16',Buffer.concat([Buffer.from([0xff,0xfe]),Buffer.from(content,'utf16le')])],['windows',Buffer.from(content,'latin1')]]){
+    const file=path.join(dir,name+'.csv');fs.writeFileSync(file,buffer);const book=readWorkbook(file),result=convertRows(book,sheetInfo(book));
+    assert.equal(result.valid,true);assert.equal(result.people[0].givenNames,'José Muñoz');assert.equal(result.people[0].sponsor,'María');
+  }
+});
 test('automatic numbering ignores blank rows, and duplicate column mappings are rejected',t=>{
   const file=path.join(setup(t),'sin-numero.xlsx');workbook(file,[['Nombre completo','Padrino'],['Ana Prueba',''],[],['Luis Prueba','Madrina']]);
   const book=readWorkbook(file),info=config(book);

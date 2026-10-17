@@ -21,11 +21,19 @@ function readWorkbook(file) {
   if(!['.xlsx','.xls','.csv'].includes(path.extname(file).toLowerCase())) throw Error('Selecciona un archivo .xlsx, .xls o .csv.');
   if(fs.statSync(file).size > 10*1024*1024) throw Error('El archivo supera el límite de 10 MB.');
   const buffer=fs.readFileSync(file);
+  let input=buffer,type='buffer';
+  if(path.extname(file).toLowerCase()==='.csv') {
+    // CSV from Excel may be UTF-8, UTF-16 or legacy Windows-1252.
+    if(buffer[0]===0xff&&buffer[1]===0xfe)input=new TextDecoder('utf-16le').decode(buffer);
+    else if(buffer[0]===0xfe&&buffer[1]===0xff)input=new TextDecoder('utf-16be').decode(buffer);
+    else {try{input=new TextDecoder('utf-8',{fatal:true}).decode(buffer);}catch{input=new TextDecoder('windows-1252').decode(buffer);}}
+    input=input.replace(/^\uFEFF/,'');type='string';
+  }
   let book;
   try {
-    const info=XLSX.read(buffer,{type:'buffer',bookSheets:true});
+    const info=XLSX.read(input,{type,bookSheets:true});
     if(info.SheetNames.length>20) throw Error('TOO_MANY_SHEETS');
-    book=XLSX.read(buffer,{type:'buffer',sheetRows:10202,cellFormula:true,cellHTML:false,cellStyles:false,raw:true});
+    book=XLSX.read(input,{type,sheetRows:10202,cellFormula:true,cellHTML:false,cellStyles:false,raw:true});
   } catch(error) {
     if(error.message==='TOO_MANY_SHEETS') throw Error('El archivo puede tener hasta 20 hojas.');
     throw Error('No se pudo leer el archivo. Comprueba que sea Excel o CSV y que no tenga contraseña.');
