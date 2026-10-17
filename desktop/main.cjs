@@ -5,6 +5,8 @@ const {pathToFileURL}=require('node:url');
 const {Store}=require('./store.cjs');
 const {csv,printHTML}=require('./export.cjs');
 const {autoUpdater}=require('electron-updater');
+const {ExcelImport}=require('./excel.cjs');
+const excelImport=new ExcelImport();
 
 protocol.registerSchemesAsPrivileged([{scheme:'sagrario',privileges:{standard:true,secure:true,supportFetchAPI:true}}]);
 if(process.env.SAGRARIO_TEST_DATA) app.setPath('userData',process.env.SAGRARIO_TEST_DATA);
@@ -17,7 +19,7 @@ app.whenReady().then(async()=>{
   app.setAppUserModelId('mx.sagrario.asistencias');
   protocol.handle('sagrario',request=>{
     const url=new URL(request.url);
-    const allowed={'/index.html':'index.html','/app.js':'app.js','/style.css':'style.css'};
+    const allowed={'/index.html':'index.html','/app.js':'app.js','/import.js':'import.js','/style.css':'style.css'};
     if(url.hostname!=='app' || !allowed[url.pathname]) return new Response('Not found',{status:404});
     return net.fetch(pathToFileURL(path.join(__dirname,'../src',allowed[url.pathname])).toString());
   });
@@ -58,6 +60,15 @@ function registerIPC(){
   handle('edit-person',args=>store.edit(args));
   handle('create-list',args=>store.create(args));
   handle('create-year',args=>store.year(args));
+  handle('excel-open',async()=>{
+    const result=await dialog.showOpenDialog(win,{title:'Importar lista desde Excel',filters:[{name:'Excel y CSV',extensions:['xlsx','xls','csv']}],properties:['openFile']});
+    if(result.canceled)return {canceled:true};
+    return excelImport.open(result.filePaths[0]);
+  });
+  handle('excel-info',args=>excelImport.info(args));
+  handle('excel-preview',args=>excelImport.preview(args));
+  handle('excel-import',args=>excelImport.commit(args,store));
+  handle('excel-discard',token=>excelImport.discard(token));
   handle('export',async({date,format})=>{
     if(!['csv','pdf'].includes(format))throw Error('Formato inválido.');
     const list=store.get(date);

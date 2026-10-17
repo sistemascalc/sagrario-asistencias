@@ -1,6 +1,6 @@
 {
   "name": "sagrario-asistencias",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Registro de asistencia de catequesis para Windows",
   "author": "Sagrario",
   "private": true,
@@ -10,10 +10,12 @@
     "test": "node --test tests/*.test.cjs",
     "test:desktop": "node scripts/smoke.cjs",
     "dist": "electron-builder --win nsis --x64 --publish never",
-    "release": "electron-builder --win nsis --x64 --publish always"
+    "release": "electron-builder --win nsis --x64 --publish always",
+    "test:import": "node scripts/smoke-import.cjs"
   },
   "dependencies": {
-    "electron-updater": "6.8.9"
+    "electron-updater": "6.8.9",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "electron": "44.8.0",

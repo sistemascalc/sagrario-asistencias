@@ -79,6 +79,15 @@ class Store {
     const source=this.get(sourceDate);
     return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{}});
   }
+  importList({date,title,source,people}) {
+    if(!dateOK(date))throw Error('Selecciona una fecha válida entre 1900 y 2199.');
+    if(this.summaries.has(date))throw Error('Ya existe una lista para ese día. Elige otra fecha para importar y conservar sus datos.');
+    if(!str(title))throw Error('Escribe el nombre de la lista.');
+    if(!Array.isArray(people)||!people.length)throw Error('El archivo no contiene personas para importar.');
+    const clean=validateList({date,title,source,people,attendance:{}});
+    clean.people.sort((a,b)=>a.id-b.id);
+    return this.save(clean);
+  }
   year({year,sourceDate,title}) {
     if (!Number.isInteger(year) || year<1900 || year>2199) throw Error('El año debe estar entre 1900 y 2199.');
     this.get(sourceDate);
