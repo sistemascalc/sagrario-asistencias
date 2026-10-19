@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const {combineAttendees}=require('./combine.cjs');
+const {layout,revision,validateSeating,automaticSeating}=require('./seating.cjs');
 
 function dateOK(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '1900-01-01' || value > '2199-12-31') return false;
@@ -24,6 +25,7 @@ function validateList(list) {
     if (a.confirmand !== undefined && typeof a.confirmand !== 'boolean' || a.sponsor !== undefined && typeof a.sponsor !== 'boolean') throw Error('Asistencia inválida.');
     clean.attendance[p.id] = {confirmand:!!a.confirmand,sponsor:!!a.sponsor,notes:str(a.notes || '',4000)};
   }
+  if(list.seating!==undefined)clean.seating=validateSeating(list.seating,clean.people);
   return clean;
 }
 function atomicWrite(file, value) {
@@ -80,7 +82,17 @@ class Store {
     if (!dateOK(date)) throw Error('Selecciona una fecha válida entre 1900 y 2199.');
     if (this.summaries.has(date)) throw Error('Ya existe una lista para ese día. Abre la lista para conservar su asistencia.');
     const source=this.get(sourceDate);
-    return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{}});
+    return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{},...(source.seating?{seating:source.seating}:{})});
+  }
+  previewSeating({date,reassign=false}) {
+    const list=this.get(date),seating=!reassign&&list.seating?list.seating:automaticSeating(list.people);
+    return {layout,people:list.people,seating,revision:revision(list),saved:!!list.seating&&!reassign};
+  }
+  saveSeating({date,assignments,revision:expected}) {
+    const list=this.get(date);
+    if(expected!==revision(list))throw Error('La lista cambió. Cierra Bancas y vuelve a revisar la distribución.');
+    list.seating=validateSeating({layoutId:layout.id,assignments},list.people);
+    return this.save(list);
   }
   combined({sourceDates}) {
     if(!Array.isArray(sourceDates)||sourceDates.length!==2||sourceDates[0]===sourceDates[1])throw Error('Selecciona dos listas de fechas diferentes.');

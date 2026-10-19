@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const {Store}=require('./store.cjs');
-const {csv,printHTML}=require('./export.cjs');
+const {csv,printHTML,seatingCSV,seatingHTML}=require('./export.cjs');
 const {autoUpdater}=require('electron-updater');
 const {ExcelImport}=require('./excel.cjs');
 const excelImport=new ExcelImport();
@@ -19,7 +19,7 @@ app.whenReady().then(async()=>{
   app.setAppUserModelId('mx.sagrario.asistencias');
   protocol.handle('sagrario',request=>{
     const url=new URL(request.url);
-    const allowed={'/index.html':'index.html','/app.js':'app.js','/import.js':'import.js','/combine.js':'combine.js','/ordering.js':'ordering.js','/style.css':'style.css'};
+    const allowed={'/index.html':'index.html','/app.js':'app.js','/import.js':'import.js','/combine.js':'combine.js','/seating.js':'seating.js','/ordering.js':'ordering.js','/style.css':'style.css'};
     if(url.hostname!=='app' || !allowed[url.pathname]) return new Response('Not found',{status:404});
     return net.fetch(pathToFileURL(path.join(__dirname,'../src',allowed[url.pathname])).toString());
   });
@@ -63,6 +63,20 @@ function registerIPC(){
   handle('preview-combined',args=>store.previewCombined(args));
   handle('create-combined',args=>store.createCombined(args));
   handle('reorder-list',args=>store.reorder(args));
+  handle('preview-seating',args=>store.previewSeating(args));
+  handle('save-seating',args=>store.saveSeating(args));
+  handle('export-seating',async({date,format})=>{
+    if(!['pdf','csv'].includes(format))throw Error('Formato inválido.');
+    const list=store.get(date);if(!list.seating)throw Error('Guarda primero la distribución de bancas.');
+    const result=await dialog.showSaveDialog(win,{title:'Guardar lista por banca',defaultPath:path.join(app.getPath('documents'),`Bancas-${date}.${format}`),filters:[{name:format.toUpperCase(),extensions:[format]}]});
+    if(result.canceled)return {canceled:true};
+    if(format==='csv')fs.writeFileSync(result.filePath,seatingCSV(list),'utf8');
+    else {
+      const printWin=new BrowserWindow({show:false,webPreferences:{sandbox:true,contextIsolation:true,nodeIntegration:false}});
+      try{await printWin.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(seatingHTML(list)));fs.writeFileSync(result.filePath,await printWin.webContents.printToPDF({printBackground:true,pageSize:'Letter',preferCSSPageSize:true}));}finally{printWin.destroy();}
+    }
+    return {path:result.filePath};
+  });
   handle('excel-open',async()=>{
     const result=await dialog.showOpenDialog(win,{title:'Importar lista desde Excel',filters:[{name:'Excel y CSV',extensions:['xlsx','xls','csv']}],properties:['openFile']});
     if(result.canceled)return {canceled:true};

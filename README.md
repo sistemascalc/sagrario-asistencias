@@ -48,6 +48,14 @@ Cambiar la posición no cambia el número de registro, las asistencias ni las no
 
 Los datos se guardan bajo `%APPDATA%/sagrario-asistencias/lists`, fuera de la instalación, con escritura atómica y copia `.bak` del estado anterior. Desinstalar o actualizar conserva estos datos. Un respaldo externo periódico protege ante pérdida de la computadora.
 
+### Bancas de Catedral
+
+Pulsa **Bancas** en la lista de una fecha. El croquis conserva los números, zonas y posiciones del archivo proporcionado: 160 bancas, cada una con tres lugares de pareja (un confirmando y su padrino). La asignación automática sigue el orden actual de la lista y las bancas de menor a mayor, sin cambiar los números de registro ni las asistencias. Revisa la vista previa y pulsa **Guardar bancas**.
+
+Selecciona una banca para ver sus tres parejas. Puedes mover una pareja a otra banca; si el destino está ocupado, ambas parejas intercambian sus lugares. Cancelar descarta los cambios sin guardar. Un registro nuevo queda sin banca hasta asignarlo. La capacidad total es de 480 confirmandos con sus padrinos.
+
+Al buscar un confirmando, su banca y lugar de pareja aparecen debajo del nombre y en sus datos. **Lista y croquis PDF** y **Lista por banca CSV** exportan la distribución guardada. El PDF/CSV de asistencia también incluye la banca. Las bancas se conservan al editar datos, cambiar asistencias, mover filas, reiniciar, respaldar o copiar la lista a otra fecha. Al combinar grupos se crea una lista sin bancas y puedes asignarlas de nuevo.
+
 ## Desarrollo
 
 Requiere Node.js 24 y pnpm 11.
