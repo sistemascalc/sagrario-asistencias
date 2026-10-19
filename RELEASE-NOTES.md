@@ -1,10 +1,8 @@
-Sagrario Asistencias 1.5.0 agrega encargados y colores por zona.
+Sagrario Asistencias 1.5.1 agrega acceso directo a Bancas y zonas.
 
-- Hasta tres encargados por cada una de las nueve zonas, guardados por fecha.
-- Colores originales del croquis en las bancas, leyenda, zona del registro y PDF.
-- Las bancas ocupadas conservan su color y se distinguen por un punto y un borde.
-- El PDF incluye la lista por banca, el croquis a color y una hoja de encargados por zona.
-- El CSV incluye el color y los tres encargados de la zona de cada registro.
-- Los encargados se conservan al mover parejas, reasignar bancas, reiniciar, copiar listas y restaurar respaldos.
+- Nuevo apartado en el menú izquierdo para consultar el croquis y cambiar parejas entre bancas.
+- Selector de fecha dentro del apartado y controles para mover parejas a la vista.
+- Guarda los cambios sin salir del apartado y avisa antes de descartar cambios pendientes al cambiar de fecha o de sección.
+- Conserva los colores de zonas, los tres encargados y el acceso a Bancas desde Asistencia.
 
-La actualización conserva las listas, asistencias, notas y bancas existentes. Los instaladores públicos no contienen datos personales.
+La actualización conserva las listas, notas, asistencias y ubicaciones guardadas.

@@ -7,6 +7,8 @@ const longDate=date=>new Intl.DateTimeFormat('es-MX',{day:'numeric',month:'long'
 const shortDate=date=>new Intl.DateTimeFormat('es-MX',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(date+'T12:00:00'));
 let meta,list,view='attendance',query='',filter='all',page=1,month='2026-10',busy=false,modalDirty=false,toastTimer;
 const pageSize=12;
+let renderVersion=0,seatingDirty=false,seatingBusy=false;
+function canLeaveSeating(){return !busy&&!seatingBusy&&(view!=='seating'||!seatingDirty||confirm('Hay cambios de bancas o encargados sin guardar. ¿Quieres descartarlos?'));}
 
 function toast(message,error=false){clearTimeout(toastTimer);const t=$('#toast');t.textContent=message;t.className='toast'+(error?' error':'');t.hidden=false;toastTimer=setTimeout(()=>t.hidden=true,error?6500:3800);}
 async function safe(fn){try{return await fn();}catch(err){toast(err.message,true);}}
@@ -18,9 +20,10 @@ function stats(){const values=Object.values(list.attendance);return {total:list.
 function renderStats(){const s=stats();$('#stats').innerHTML=[['Registros en la lista',s.total,'Confirmandos y sus padrinos','♧',''],['Confirmandos presentes',s.confirmands,`${s.total?Math.round(s.confirmands/s.total*100):0}% de asistencia`,'✓','green'],['Padrinos presentes',s.sponsors,`${s.total?Math.round(s.sponsors/s.total*100):0}% de asistencia`,'✓','green'],['Confirmandos por registrar',s.total-s.confirmands,'Sin palomita de asistencia','◷','']].map(([title,n,sub,icon,cls])=>`<div class="stat ${cls}"><div class="stat-label">${title}</div><div class="stat-icon" aria-hidden="true">${icon}</div><div class="stat-number">${n}</div><div class="stat-meta">${sub}</div></div>`).join('');}
 function listOptions(selected=list.date){return meta.lists.map(l=>`<option value="${l.date}" ${l.date===selected?'selected':''}>${e(shortDate(l.date))} · ${l.total} registros</option>`).join('');}
 function render(){
+  const version=++renderVersion;
   document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});
-  $('#crumb').textContent={attendance:'Registro de asistencia',calendar:'Listas y calendario',settings:'Ajustes y respaldos'}[view];
-  if(view==='attendance')renderAttendance();else if(view==='calendar')renderCalendar();else renderSettings();
+  $('#crumb').textContent={attendance:'Registro de asistencia',calendar:'Listas y calendario',seating:'Bancas y zonas',settings:'Ajustes y respaldos'}[view];
+  if(view==='attendance')renderAttendance();else if(view==='calendar')renderCalendar();else if(view==='seating')safe(()=>renderSeatingPage(version));else renderSettings();
 }
 function colorSeatZones(){document.querySelectorAll('[data-seat-zone]').forEach(el=>{const zone=meta.seatingLayout.zones.find(z=>z.number===Number(el.dataset.seatZone));el.style.setProperty('--zone-color',zone.color);el.style.setProperty('--zone-text',zone.textColor);});}
 function renderAttendance(){
@@ -104,7 +107,7 @@ function renderSettings(){
   $('#check-updates').onclick=()=>safe(async()=>updateStatus(await api.checkUpdates()));$('#download-update').onclick=()=>safe(async()=>updateStatus(await api.downloadUpdate()));$('#install-update').onclick=()=>safe(()=>api.installUpdate());updateStatus(meta.update);
 }
 function updateStatus(status){if(meta)meta.update=status;if(view!=='settings')return;$('#update-message').textContent=status.message;$('#check-updates').disabled=['checking','downloading'].includes(status.status);$('#download-update').hidden=status.status!=='available';$('#install-update').hidden=status.status!=='downloaded';}
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>safe(async()=>{view=b.dataset.view;await refreshMeta();render();}));
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>safe(async()=>{if(!canLeaveSeating())return;view=b.dataset.view;seatingDirty=false;++renderVersion;await refreshMeta();render();}));
 document.addEventListener('keydown',ev=>{if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='k'&&!$('#modal').open){ev.preventDefault();if(view==='attendance'){$('#search').focus();$('#search').select();}}});
 async function start(){if(!api){$('#workspace').innerHTML='<div class="empty"><strong>Abre Sagrario desde la aplicación de Windows.</strong>Esta pantalla necesita la aplicación de escritorio para guardar tus listas.</div>';return;}await refreshMeta();const initial=meta.lists.some(l=>l.date==='2026-10-18')?'2026-10-18':meta.lists[0].date;list=await api.getList(initial);month=initial.slice(0,7);api.onUpdate(updateStatus);render();}
 safe(start);

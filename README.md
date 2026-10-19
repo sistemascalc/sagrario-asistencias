@@ -91,3 +91,6 @@ Referencias técnicas: [seguridad en Electron](https://www.electronjs.org/docs/l
 Cada una de las nueve zonas conserva su color original en el croquis, la leyenda y el PDF. Las bancas ocupadas muestran un punto y un borde, sin perder su color. Al buscar un registro también aparece la zona y su color.
 
 En **Bancas**, selecciona una zona de la leyenda y completa **Encargado 1, 2 y 3** (opcionales). Pulsa **Guardar bancas**. Los encargados se guardan por fecha y se conservan al reasignar bancas, copiar una lista o restaurar un respaldo. El PDF incluye una hoja de encargados con las nueve zonas; el CSV añade sus nombres a cada registro de la zona. Estos encargados no consumen lugares de pareja.
+
+
+**Bancas y zonas** aparece también en el menú izquierdo. Abre el croquis directamente, permite elegir la fecha y muestra primero los controles para mover una pareja. Guarda para aplicar los cambios; salir o cambiar de fecha avisa si hay cambios pendientes. El botón **Bancas** de Asistencia sigue disponible.
