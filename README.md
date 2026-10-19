@@ -3,7 +3,7 @@
 Aplicación de escritorio en Electron para Windows, con diseño azul marino y guardado local.
 
 - Búsqueda exacta por número, o por nombre del confirmando o padrino (sin distinguir acentos).
-- Palomitas independientes de asistencia para confirmando y padrino.
+- Casillas de asistencia grandes y de alto contraste, con marcas individuales y opción **Ambos** en un solo clic.
 - Corrección de nombres, padrinos, observaciones permanentes y notas por día.
 - Calendario: crear una fecha o todos los días de un año, sin sobrescribir listas existentes.
 - Importación local de Excel (.xlsx, .xls) y CSV con selección de hoja, columnas y vista previa.
@@ -15,7 +15,7 @@ Aplicación de escritorio en Electron para Windows, con diseño azul marino y gu
 
 ## Uso
 
-Abre la app, elige la fecha y escribe el número en el buscador. Marca cada asistencia. Pulsa el nombre o el lápiz para editar los datos y notas, y después **Guardar cambios**. La búsqueda por número es exacta: `12` no devuelve `112`.
+Abre la app, elige la fecha y escribe el número en el buscador. Marca cada asistencia por separado o usa **Ambos** para marcar al confirmando y al padrino con un clic. Desmarcar **Ambos** quita las dos palomitas. Una raya en esa casilla indica que sólo una persona tiene asistencia marcada. Las mismas opciones están disponibles al editar un registro. Pulsa el nombre o el lápiz para editar los datos y notas, y después **Guardar cambios**. La búsqueda por número es exacta: `12` no devuelve `112`.
 
 En **Listas y calendario**, crea un día o un año completo. Selecciona la lista de la que deseas copiar los nombres. Las nuevas fechas copian personas y observaciones del registro; comienzan sin asistencias y sin notas del día. Las correcciones se aplican solamente a la lista abierta y a nuevas listas que se creen copiándola. Las listas que ya existen conservan su información histórica.
 

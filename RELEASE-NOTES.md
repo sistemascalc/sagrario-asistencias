@@ -1,10 +1,9 @@
-Sagrario Asistencias 1.2.1 corrige la numeración al combinar dos listas de grupos diferentes.
+Sagrario Asistencias 1.3.0 facilita el registro de asistencia.
 
-- La tercera lista incluye a todos los confirmandos que asistieron en cada grupo, junto con sus padrinos, aunque sus números o nombres anteriores coincidan.
-- Después de ordenar por apellido, asigna una numeración completamente nueva: 1, 2, 3… sin números repetidos.
-- La vista previa muestra los nuevos números. Ya no es necesario resolver coincidencias entre los números anteriores.
-- Puedes seguir moviendo personas de lugar después de crear la lista.
+- Casillas más grandes, con borde azul marino grueso y palomita blanca sobre fondo oscuro.
+- Nueva casilla **Ambos** para marcar al confirmando y al padrino con un solo clic. Desmarcarla quita ambas asistencias.
+- Una raya en **Ambos** indica que sólo una de las dos personas tiene asistencia marcada; al pulsarla se marcan las dos.
+- Disponible en la tabla y al editar los datos del registro. Las marcas individuales siguen funcionando y se sincronizan con **Ambos**.
+- Las dos asistencias se guardan juntas y se conservan al cerrar la aplicación.
 
-La nueva lista comienza con las asistencias y notas del día en blanco. Se conservan los datos de los integrantes, las listas originales y los registros guardados en esta computadora.
-
-El instalador público no contiene registros personales.
+La actualización conserva las listas, notas y asistencias guardadas. El instalador público no contiene registros personales.

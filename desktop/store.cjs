@@ -58,8 +58,10 @@ class Store {
   list() { return [...this.summaries.values()].sort((a,b)=>b.date.localeCompare(a.date)); }
   attendance({date,id,role,value}) {
     const list=this.get(date);
-    if (!list.people.some(p=>p.id===id) || !['confirmand','sponsor'].includes(role) || typeof value!=='boolean') throw Error('Asistencia inválida.');
-    list.attendance[id][role]=value; return this.save(list);
+    if (!list.people.some(p=>p.id===id) || !['confirmand','sponsor','both'].includes(role) || typeof value!=='boolean') throw Error('Asistencia inválida.');
+    if(role==='both') {list.attendance[id].confirmand=value;list.attendance[id].sponsor=value;}
+    else list.attendance[id][role]=value;
+    return this.save(list);
   }
   edit({date,record,dailyNotes,create=false,present}) {
     const list=this.get(date), p=person(record), index=list.people.findIndex(x=>x.id===p.id);

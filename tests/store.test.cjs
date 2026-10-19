@@ -6,6 +6,20 @@ const {csv,printHTML}=require('../desktop/export.cjs');
 const fixture=()=>({date:'2026-10-18',title:'Grupo de prueba',source:'fixture',people:[{id:1,givenNames:'Persona',paternalSurname:'Prueba',maternalSurname:'Uno',sponsor:'Padrino de prueba',notes:'Observación permanente'},{id:139,givenNames:'Otro',paternalSurname:'Registro',maternalSurname:'',sponsor:'Madrina de prueba',notes:''}],attendance:{139:{confirmand:false,sponsor:false,notes:'Marca original: x. Pendiente de verificar.'}}});
 function setup(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'sagrario-test-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));return {root,store:new Store(root,fixture())};}
 test('attendance is independent, saved on disk, and retained after restart',t=>{const {root,store}=setup(t);store.attendance({date:'2026-10-18',id:1,role:'confirmand',value:true});const reopened=new Store(root,fixture()).get('2026-10-18');assert.equal(reopened.attendance[1].confirmand,true);assert.equal(reopened.attendance[1].sponsor,false);assert.equal(reopened.attendance[139].confirmand,false);});
+test('both attendance marks save together, preserve notes and other records, and survive reopening',t=>{
+  const {root,store}=setup(t),date='2026-10-18',before=store.get(date);
+  store.attendance({date,id:139,role:'confirmand',value:true});
+  store.attendance({date,id:139,role:'both',value:true});
+  const reopened=new Store(root,fixture()),list=reopened.get(date);
+  assert.deepEqual(list.attendance[139],{...before.attendance[139],confirmand:true,sponsor:true});
+  assert.deepEqual(list.attendance[1],before.attendance[1]);assert.deepEqual(list.people,before.people);
+  assert.deepEqual(reopened.list()[0],{date,title:'Grupo de prueba',total:2,confirmands:1,sponsors:1});
+  reopened.attendance({date,id:139,role:'both',value:false});
+  assert.deepEqual(new Store(root,fixture()).get(date),before);
+  assert.throws(()=>reopened.attendance({date,id:139,role:'both',value:'true'}),/inválida/);
+  assert.throws(()=>reopened.attendance({date,id:999,role:'both',value:true}),/inválida/);
+  assert.deepEqual(reopened.get(date),before);
+});
 test('corrections, daily notes and two attendance values commit together',t=>{const {store}=setup(t);const record={...fixture().people[0],givenNames:'Corregido'};store.edit({date:'2026-10-18',record,dailyNotes:'Cambio de padrino',present:{confirmand:true,sponsor:true}});const data=store.get('2026-10-18');assert.equal(data.people[0].givenNames,'Corregido');assert.deepEqual(data.attendance[1],{confirmand:true,sponsor:true,notes:'Cambio de padrino'});});
 test('new dates copy corrected roster without attendance or daily notes',t=>{const {store}=setup(t);store.attendance({date:'2026-10-18',id:1,role:'sponsor',value:true});const next=store.create({date:'2026-10-19',sourceDate:'2026-10-18'});assert.deepEqual(next.attendance[1],{confirmand:false,sponsor:false,notes:''});assert.equal(next.people[0].notes,'Observación permanente');assert.equal(store.get('2026-10-18').attendance[1].sponsor,true);assert.throws(()=>store.create({date:'2026-10-19',sourceDate:'2026-10-18'}),/Ya existe/);});
 test('annual generation preserves existing data and supports leap years',t=>{const {store}=setup(t);store.attendance({date:'2026-10-18',id:1,role:'confirmand',value:true});assert.deepEqual(store.year({year:2026,sourceDate:'2026-10-18'}),{created:364,skipped:1});assert.equal(store.get('2026-10-18').attendance[1].confirmand,true);assert.deepEqual(store.year({year:2028,sourceDate:'2026-10-18'}),{created:366,skipped:0});assert.equal(store.get('2028-02-29').people.length,2);});
