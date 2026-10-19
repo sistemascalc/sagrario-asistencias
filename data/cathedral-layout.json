@@ -967,49 +967,76 @@
   ],
   "zones": [
     {
-      "number": 7,
-      "row": 9,
-      "column": 3
-    },
-    {
       "number": 1,
       "row": 9,
-      "column": 11
-    },
-    {
-      "number": 4,
-      "row": 10,
-      "column": 7
-    },
-    {
-      "number": 8,
-      "row": 20,
-      "column": 3
-    },
-    {
-      "number": 5,
-      "row": 20,
-      "column": 7
+      "column": 11,
+      "color": "#F2CFEE",
+      "label": "Rosa",
+      "textColor": "#111111"
     },
     {
       "number": 2,
       "row": 20,
-      "column": 11
-    },
-    {
-      "number": 6,
-      "row": 30,
-      "column": 7
-    },
-    {
-      "number": 9,
-      "row": 32,
-      "column": 3
+      "column": 11,
+      "color": "#FFFF00",
+      "label": "Amarillo",
+      "textColor": "#111111"
     },
     {
       "number": 3,
       "row": 32,
-      "column": 11
+      "column": 11,
+      "color": "#9966FF",
+      "label": "Morado",
+      "textColor": "#111111"
+    },
+    {
+      "number": 4,
+      "row": 10,
+      "column": 7,
+      "color": "#B4E5A2",
+      "label": "Verde",
+      "textColor": "#111111"
+    },
+    {
+      "number": 5,
+      "row": 20,
+      "column": 7,
+      "color": "#96DCF8",
+      "label": "Azul claro",
+      "textColor": "#111111"
+    },
+    {
+      "number": 6,
+      "row": 30,
+      "column": 7,
+      "color": "#F6C6AD",
+      "label": "Durazno",
+      "textColor": "#111111"
+    },
+    {
+      "number": 7,
+      "row": 9,
+      "column": 3,
+      "color": "#CCCCFF",
+      "label": "Lavanda",
+      "textColor": "#111111"
+    },
+    {
+      "number": 8,
+      "row": 20,
+      "column": 3,
+      "color": "#CC6600",
+      "label": "Naranja",
+      "textColor": "#111111"
+    },
+    {
+      "number": 9,
+      "row": 32,
+      "column": 3,
+      "color": "#99CC00",
+      "label": "Verde lima",
+      "textColor": "#111111"
     }
   ],
   "pillars": [

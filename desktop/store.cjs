@@ -85,13 +85,14 @@ class Store {
     return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{},...(source.seating?{seating:source.seating}:{})});
   }
   previewSeating({date,reassign=false}) {
-    const list=this.get(date),seating=!reassign&&list.seating?list.seating:automaticSeating(list.people);
+    const list=this.get(date),seating=!reassign&&list.seating?list.seating:{...automaticSeating(list.people),...(list.seating?.zoneLeaders?{zoneLeaders:list.seating.zoneLeaders}:{})};
     return {layout,people:list.people,seating,revision:revision(list),saved:!!list.seating&&!reassign};
   }
-  saveSeating({date,assignments,revision:expected}) {
+  saveSeating({date,assignments,zoneLeaders,revision:expected}) {
     const list=this.get(date);
     if(expected!==revision(list))throw Error('La lista cambió. Cierra Bancas y vuelve a revisar la distribución.');
-    list.seating=validateSeating({layoutId:layout.id,assignments},list.people);
+    const leaders=zoneLeaders===undefined?list.seating?.zoneLeaders:zoneLeaders;
+    list.seating=validateSeating({layoutId:layout.id,assignments,...(leaders!==undefined?{zoneLeaders:leaders}:{})},list.people);
     return this.save(list);
   }
   combined({sourceDates}) {

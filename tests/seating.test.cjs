@@ -11,6 +11,31 @@ test('croquis has 160 unique benches, distinguishes zone labels and preserves ac
   assert.deepEqual(layout.benches.map(b=>b.number),Array.from({length:160},(_,i)=>i+1));
   assert.deepEqual(layout.benches[0],{number:1,row:5,column:12,zone:1});assert.deepEqual(layout.benches[159],{number:160,row:38,column:2,zone:9});assert.equal(layout.zones.length,9);assert.equal(layout.pillars.length,6);
 });
+test('zone colors match the source and leaders survive attendance, reassigning, copying and backup',t=>{
+  assert.deepEqual(layout.zones.map(z=>z.color),['#F2CFEE','#FFFF00','#9966FF','#B4E5A2','#96DCF8','#F6C6AD','#CCCCFF','#CC6600','#99CC00']);
+  const {store,date,root}=setup(t),p=store.previewSeating({date});
+  const zoneLeaders={1:['  Ana María  ','José & Luis','<Marta>'],8:['=Nombre']};
+  const saved=store.saveSeating({date,revision:p.revision,assignments:p.seating.assignments,zoneLeaders});
+  assert.deepEqual(saved.seating.zoneLeaders,{1:['Ana María','José & Luis','<Marta>'],8:['=Nombre','','']});
+  store.attendance({date,id:10,role:'both',value:false});
+  const fresh=store.previewSeating({date,reassign:true});assert.deepEqual(fresh.seating.zoneLeaders,saved.seating.zoneLeaders);
+  store.saveSeating({date,revision:fresh.revision,assignments:fresh.seating.assignments});
+  assert.deepEqual(new Store(root).get(date).seating.zoneLeaders,saved.seating.zoneLeaders);
+  assert.deepEqual(store.create({date:'2026-10-26',sourceDate:date}).seating.zoneLeaders,saved.seating.zoneLeaders);
+  store.restore(store.backup());assert.deepEqual(store.get(date).seating.zoneLeaders,saved.seating.zoneLeaders);
+  const html=seatingHTML(saved);assert.ok(html.includes('José &amp; Luis'));assert.ok(html.includes('&lt;Marta&gt;'));assert.ok(!html.includes('<Marta>'));assert.ok(html.includes('Encargados por zona'));assert.ok(html.includes('background:#F2CFEE'));
+  const moved={...saved,seating:{...saved.seating,assignments:{...saved.seating.assignments,10:{bench:141,pair:1}}}};
+  assert.ok(seatingCSV(moved).includes('"\'=Nombre"'));assert.ok(seatingCSV(moved).includes('"Encargado 1","Encargado 2","Encargado 3"'));
+});
+test('invalid leaders never replace a list and three empty slots can clear a zone',t=>{
+  const {store,date}=setup(t),p=store.previewSeating({date}),before=store.get(date);
+  for(const zoneLeaders of [null,[],{0:['Ana']},{10:['Ana']},{'01':['Ana']},{1:['A','B','C','D']},{1:[17]},{1:'Ana'},{1:['x'.repeat(121)]}]){
+    assert.throws(()=>store.saveSeating({date,revision:p.revision,assignments:p.seating.assignments,zoneLeaders}));assert.deepEqual(store.get(date),before);
+  }
+  const first=store.saveSeating({date,revision:p.revision,assignments:p.seating.assignments,zoneLeaders:{1:['Ana']}});
+  const next=store.previewSeating({date});const clear=store.saveSeating({date,revision:next.revision,assignments:next.seating.assignments,zoneLeaders:{1:['','','']}});
+  assert.deepEqual(clear.seating.zoneLeaders[1],['','','']);assert.deepEqual(clear.attendance,first.attendance);assert.deepEqual(clear.people,first.people);assert.deepEqual(clear.seating.assignments,first.seating.assignments);
+});
 test('22 records occupy eight benches with three intact pairs per bench and retain existing IDs/order',t=>{
   const {store,date}=setup(t),before=store.get(date),preview=store.previewSeating({date});
   assert.deepEqual(store.get(date),before);assert.equal(preview.saved,false);

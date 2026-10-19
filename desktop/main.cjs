@@ -4,6 +4,7 @@ const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const {Store}=require('./store.cjs');
 const {csv,printHTML,seatingCSV,seatingHTML}=require('./export.cjs');
+const {layout:seatingLayout}=require('./seating.cjs');
 const {autoUpdater}=require('electron-updater');
 const {ExcelImport}=require('./excel.cjs');
 const excelImport=new ExcelImport();
@@ -54,7 +55,7 @@ function setupUpdates(){
   autoUpdater.on('error',()=>sendUpdate('error','No se pudo consultar o descargar la actualización. Revisa tu conexión y los lanzamientos de GitHub.'));
 }
 function registerIPC(){
-  handle('init',()=>({lists:store.list(),version:app.getVersion(),dataPath:app.getPath('userData'),update}));
+  handle('init',()=>({lists:store.list(),version:app.getVersion(),dataPath:app.getPath('userData'),update,seatingLayout}));
   handle('get-list',date=>store.get(date));
   handle('attendance',args=>store.attendance(args));
   handle('edit-person',args=>store.edit(args));

@@ -1,10 +1,10 @@
-Sagrario Asistencias 1.4.0 agrega distribución de bancas para Catedral.
+Sagrario Asistencias 1.5.0 agrega encargados y colores por zona.
 
-- Croquis con 160 bancas y sus zonas, respetando la numeración y las posiciones proporcionadas.
-- Asignación por el orden actual de la lista: 3 confirmandos con sus 3 padrinos por banca, manteniendo juntas las parejas.
-- Vista previa, consulta de cada banca y cambio de parejas entre lugares antes de guardar.
-- La banca y el lugar de pareja se muestran al buscar o editar cada registro.
-- Exportación de la lista por banca y del croquis a PDF, además de CSV. La lista de asistencia también muestra la banca.
-- Las ubicaciones se conservan con las notas, asistencias, respaldos y listas copiadas.
+- Hasta tres encargados por cada una de las nueve zonas, guardados por fecha.
+- Colores originales del croquis en las bancas, leyenda, zona del registro y PDF.
+- Las bancas ocupadas conservan su color y se distinguen por un punto y un borde.
+- El PDF incluye la lista por banca, el croquis a color y una hoja de encargados por zona.
+- El CSV incluye el color y los tres encargados de la zona de cada registro.
+- Los encargados se conservan al mover parejas, reasignar bancas, reiniciar, copiar listas y restaurar respaldos.
 
-La actualización conserva los datos de esta computadora. Los instaladores públicos no contienen nombres ni listas personales.
+La actualización conserva las listas, asistencias, notas y bancas existentes. Los instaladores públicos no contienen datos personales.

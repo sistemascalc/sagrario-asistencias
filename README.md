@@ -54,7 +54,7 @@ Pulsa **Bancas** en la lista de una fecha. El croquis conserva los números, zon
 
 Selecciona una banca para ver sus tres parejas. Puedes mover una pareja a otra banca; si el destino está ocupado, ambas parejas intercambian sus lugares. Cancelar descarta los cambios sin guardar. Un registro nuevo queda sin banca hasta asignarlo. La capacidad total es de 480 confirmandos con sus padrinos.
 
-Al buscar un confirmando, su banca y lugar de pareja aparecen debajo del nombre y en sus datos. **Lista y croquis PDF** y **Lista por banca CSV** exportan la distribución guardada. El PDF/CSV de asistencia también incluye la banca. Las bancas se conservan al editar datos, cambiar asistencias, mover filas, reiniciar, respaldar o copiar la lista a otra fecha. Al combinar grupos se crea una lista sin bancas y puedes asignarlas de nuevo.
+Al buscar un confirmando, su banca y lugar de pareja aparecen debajo del nombre y en sus datos. **Lista, croquis y encargados PDF** y **Lista por banca CSV** exportan la distribución guardada. El PDF/CSV de asistencia también incluye la banca. Las bancas se conservan al editar datos, cambiar asistencias, mover filas, reiniciar, respaldar o copiar la lista a otra fecha. Al combinar grupos se crea una lista sin bancas y puedes asignarlas de nuevo.
 
 ## Desarrollo
 
@@ -86,3 +86,8 @@ Sin el archivo local, la app inicia con una lista vacía; se puede importar Exce
 El repositorio configurado es `sistemascalc/sagrario-asistencias`. Aumenta `version` en `package.json`, sube los cambios y una etiqueta con la misma versión, por ejemplo `v1.0.1`. El flujo de GitHub Actions prueba el programa y publica el instalador, su `.blockmap` y `latest.yml` en GitHub Releases. La app instalada consulta estos archivos mediante electron-updater. No incluyas tokens de GitHub dentro de la app.
 
 Referencias técnicas: [seguridad en Electron](https://www.electronjs.org/docs/latest/tutorial/security), [actualizaciones con electron-builder](https://www.electron.build/v26/docs/features/auto-update/) y [distribución oficial de SheetJS](https://docs.sheetjs.com/docs/getting-started/installation/nodejs/).
+
+
+Cada una de las nueve zonas conserva su color original en el croquis, la leyenda y el PDF. Las bancas ocupadas muestran un punto y un borde, sin perder su color. Al buscar un registro también aparece la zona y su color.
+
+En **Bancas**, selecciona una zona de la leyenda y completa **Encargado 1, 2 y 3** (opcionales). Pulsa **Guardar bancas**. Los encargados se guardan por fecha y se conservan al reasignar bancas, copiar una lista o restaurar un respaldo. El PDF incluye una hoja de encargados con las nueve zonas; el CSV añade sus nombres a cada registro de la zona. Estos encargados no consumen lugares de pareja.
