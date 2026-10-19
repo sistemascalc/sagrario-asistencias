@@ -1,10 +1,11 @@
-Sagrario Asistencias 1.1.1 incorpora **Importar Excel** en Asistencia y Listas y calendario.
+Sagrario Asistencias 1.2.0 permite crear una nueva lista a partir de los asistentes de dos fechas.
 
-- Admite archivos .xlsx, .xls y .csv, con selección de hoja y fila de encabezados.
-- Permite relacionar las columnas de número, nombre, apellidos, padrino y observaciones.
-- Incluye numeración automática cuando el archivo no tiene números de registro.
-- Muestra una vista previa y detecta números repetidos, nombres faltantes y fórmulas antes de guardar.
-- Conserva acentos y la letra ñ en CSV UTF-8, UTF-16 y Windows.
-- Crea una lista nueva en la fecha elegida y conserva las listas y asistencias existentes.
+- **Combinar dos listas:** elige dos listas existentes y una nueva fecha. Se incluyen los confirmandos que asistieron al menos a una de las dos fechas, junto con sus padrinos.
+- **Orden por apellido:** la nueva lista se ordena por apellido paterno, materno y nombre.
+- **Ordenar y mover:** usa flechas o una posición exacta para acomodar personas y guarda el orden. Los números de registro, asistencias y notas se conservan.
+- El orden se mantiene al cerrar la app, editar registros, copiar listas, respaldar y exportar a PDF o CSV.
+- La vista previa unifica registros con el mismo número y nombre, y permite resolver números que corresponden a nombres distintos.
 
-La importación se realiza completamente en la computadora. Los archivos no se envían a internet. El instalador público no incluye registros personales; la actualización conserva los que ya están guardados.
+La nueva lista comienza con las asistencias en blanco. Las listas originales y las fechas existentes se conservan. Los registros sin apellidos separados se muestran al final para su revisión.
+
+La actualización conserva los datos de esta computadora. El instalador público no contiene registros personales.

@@ -7,6 +7,8 @@ Aplicación de escritorio en Electron para Windows, con diseño azul marino y gu
 - Corrección de nombres, padrinos, observaciones permanentes y notas por día.
 - Calendario: crear una fecha o todos los días de un año, sin sobrescribir listas existentes.
 - Importación local de Excel (.xlsx, .xls) y CSV con selección de hoja, columnas y vista previa.
+- Combinación de dos fechas con los confirmandos que asistieron a cualquiera de ellas, ordenados por apellido.
+- Orden manual con flechas o posición exacta, conservando números, asistencias y el orden de exportación.
 - Exportación completa de una fecha a PDF horizontal o CSV compatible con Excel.
 - Respaldo y restauración de todas las listas; copia automática anterior a cada restauración.
 - Instalador NSIS y actualizaciones desde GitHub Releases.
@@ -30,6 +32,20 @@ La importación crea una lista nueva; una fecha existente no se reemplaza. Las a
 
 Se admiten archivos de hasta 10 MB, 20 hojas, 100 columnas por hoja y 10,000 personas por lista; la fila de encabezados puede estar entre las primeras 200 filas. Los archivos protegidos por contraseña no se admiten. Las fórmulas en las columnas seleccionadas deben pegarse como valores antes de importar. Todo se procesa en esta computadora; el archivo no se sube a GitHub ni a otro servidor.
 
+### Combinar asistentes de dos listas
+
+Pulsa **Combinar dos listas**, disponible en Asistencia y Listas y calendario. Selecciona dos fechas diferentes, la fecha de la nueva lista y su nombre. La vista previa incluye solamente a los confirmandos con su asistencia marcada en al menos una de las dos fechas; la asistencia del padrino por sí sola no incluye al confirmando. Cada integrante conserva a su padrino y sus observaciones. Las palomitas y notas del nuevo día comienzan en blanco.
+
+Cuando el mismo número y nombre aparecen en ambas fechas, se incluye una sola persona con los datos de la asistencia más reciente. Si un número corresponde a nombres distintos, elige el registro de una de las listas o conserva ambos: en este último caso se asigna un número libre al segundo registro solamente en la lista nueva. Los nombres iguales con números distintos se conservan separados y se muestran para revisión. La app no sobrescribe fechas existentes, no modifica las listas originales y pide revisar de nuevo si sus datos cambiaron desde la vista previa.
+
+El orden inicial es por apellido paterno, apellido materno y nombre, con ordenación en español. Los registros sin apellidos separados quedan al final por nombre. Para ordenarlos por apellido, completa sus campos de apellidos mediante **Editar** y usa **A–Z por apellido**.
+
+### Mover personas y guardar el orden
+
+Abre una fecha y pulsa **Ordenar y mover**. Usa las flechas para subir o bajar integrantes, o selecciona a una persona e indica su nueva posición en la lista completa. Puedes buscar por número o nombre. **A–Z por apellido** vuelve a ordenar toda la lista y **Guardar orden** conserva los cambios. Cancelar deja el orden anterior intacto.
+
+Cambiar la posición no cambia el número de registro, las asistencias ni las notas. El orden se conserva después de editar, cerrar la app, crear listas que copien esa fecha, respaldar y restaurar; también se utiliza al exportar a PDF o CSV. Los nuevos integrantes agregados manualmente se colocan al final.
+
 Los datos se guardan bajo `%APPDATA%/sagrario-asistencias/lists`, fuera de la instalación, con escritura atómica y copia `.bak` del estado anterior. Desinstalar o actualizar conserva estos datos. Un respaldo externo periódico protege ante pérdida de la computadora.
 
 ## Desarrollo
@@ -43,6 +59,7 @@ pnpm start
 pnpm test
 pnpm test:desktop
 pnpm test:import
+pnpm test:combine
 pnpm dist
 ```
 

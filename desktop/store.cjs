@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
+const {combineAttendees}=require('./combine.cjs');
 
 function dateOK(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '1900-01-01' || value > '2199-12-31') return false;
@@ -66,7 +67,7 @@ class Store {
     if (!create && index<0) throw Error('No se encontró el registro.');
     if (create) {list.people.push(p); list.attendance[p.id]={confirmand:false,sponsor:false,notes:''};}
     else list.people[index]=p;
-    list.people.sort((a,b)=>a.id-b.id); list.attendance[p.id].notes=str(dailyNotes || '',4000);
+    list.attendance[p.id].notes=str(dailyNotes || '',4000);
     if(present) {
       if(typeof present.confirmand!=='boolean'||typeof present.sponsor!=='boolean')throw Error('Asistencia inválida.');
       list.attendance[p.id].confirmand=present.confirmand;list.attendance[p.id].sponsor=present.sponsor;
@@ -78,6 +79,27 @@ class Store {
     if (this.summaries.has(date)) throw Error('Ya existe una lista para ese día. Abre la lista para conservar su asistencia.');
     const source=this.get(sourceDate);
     return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{}});
+  }
+  combined({sourceDates,resolutions={}}) {
+    if(!Array.isArray(sourceDates)||sourceDates.length!==2||sourceDates[0]===sourceDates[1])throw Error('Selecciona dos listas de fechas diferentes.');
+    return combineAttendees(sourceDates.map(date=>this.get(date)),resolutions);
+  }
+  previewCombined(args) {const result=this.combined(args);return {...result,people:result.people.slice(0,12)};}
+  createCombined({date,title,sourceDates,resolutions,revision}) {
+    if(!dateOK(date))throw Error('Selecciona una fecha válida entre 1900 y 2199.');
+    if(this.summaries.has(date))throw Error('Ya existe una lista para ese día. Elige otra fecha para conservar sus datos.');
+    if(!str(title))throw Error('Escribe el nombre de la nueva lista.');
+    const result=this.combined({sourceDates,resolutions});
+    if(revision!==result.revision)throw Error('Las listas de origen cambiaron. Revisa nuevamente la vista previa.');
+    if(result.unresolved)throw Error('Resuelve los números que corresponden a nombres diferentes.');
+    if(!result.total)throw Error('No hay confirmandos con asistencia marcada en las listas seleccionadas.');
+    if(result.total>10000)throw Error('La nueva lista supera el límite de 10,000 personas.');
+    return this.save({date,title,source:`Asistentes de ${sourceDates.join(' y ')}. Confirmando presente en al menos una fecha.`,people:result.people,attendance:{}});
+  }
+  reorder({date,ids}) {
+    const list=this.get(date),byId=new Map(list.people.map(p=>[p.id,p]));
+    if(!Array.isArray(ids)||ids.length!==list.people.length||new Set(ids).size!==ids.length||ids.some(id=>!Number.isSafeInteger(id)||!byId.has(id)))throw Error('La lista cambió o el orden no es válido. Cierra esta ventana y vuelve a organizarla.');
+    list.people=ids.map(id=>byId.get(id));return this.save(list);
   }
   importList({date,title,source,people}) {
     if(!dateOK(date))throw Error('Selecciona una fecha válida entre 1900 y 2199.');

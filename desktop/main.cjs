@@ -19,7 +19,7 @@ app.whenReady().then(async()=>{
   app.setAppUserModelId('mx.sagrario.asistencias');
   protocol.handle('sagrario',request=>{
     const url=new URL(request.url);
-    const allowed={'/index.html':'index.html','/app.js':'app.js','/import.js':'import.js','/style.css':'style.css'};
+    const allowed={'/index.html':'index.html','/app.js':'app.js','/import.js':'import.js','/combine.js':'combine.js','/ordering.js':'ordering.js','/style.css':'style.css'};
     if(url.hostname!=='app' || !allowed[url.pathname]) return new Response('Not found',{status:404});
     return net.fetch(pathToFileURL(path.join(__dirname,'../src',allowed[url.pathname])).toString());
   });
@@ -60,6 +60,9 @@ function registerIPC(){
   handle('edit-person',args=>store.edit(args));
   handle('create-list',args=>store.create(args));
   handle('create-year',args=>store.year(args));
+  handle('preview-combined',args=>store.previewCombined(args));
+  handle('create-combined',args=>store.createCombined(args));
+  handle('reorder-list',args=>store.reorder(args));
   handle('excel-open',async()=>{
     const result=await dialog.showOpenDialog(win,{title:'Importar lista desde Excel',filters:[{name:'Excel y CSV',extensions:['xlsx','xls','csv']}],properties:['openFile']});
     if(result.canceled)return {canceled:true};
