@@ -80,21 +80,20 @@ class Store {
     const source=this.get(sourceDate);
     return this.save({date,title:str(title || source.title),source:source.source,people:source.people,attendance:{}});
   }
-  combined({sourceDates,resolutions={}}) {
+  combined({sourceDates}) {
     if(!Array.isArray(sourceDates)||sourceDates.length!==2||sourceDates[0]===sourceDates[1])throw Error('Selecciona dos listas de fechas diferentes.');
-    return combineAttendees(sourceDates.map(date=>this.get(date)),resolutions);
+    return combineAttendees(sourceDates.map(date=>this.get(date)));
   }
   previewCombined(args) {const result=this.combined(args);return {...result,people:result.people.slice(0,12)};}
-  createCombined({date,title,sourceDates,resolutions,revision}) {
+  createCombined({date,title,sourceDates,revision}) {
     if(!dateOK(date))throw Error('Selecciona una fecha válida entre 1900 y 2199.');
     if(this.summaries.has(date))throw Error('Ya existe una lista para ese día. Elige otra fecha para conservar sus datos.');
     if(!str(title))throw Error('Escribe el nombre de la nueva lista.');
-    const result=this.combined({sourceDates,resolutions});
+    const result=this.combined({sourceDates});
     if(revision!==result.revision)throw Error('Las listas de origen cambiaron. Revisa nuevamente la vista previa.');
-    if(result.unresolved)throw Error('Resuelve los números que corresponden a nombres diferentes.');
     if(!result.total)throw Error('No hay confirmandos con asistencia marcada en las listas seleccionadas.');
     if(result.total>10000)throw Error('La nueva lista supera el límite de 10,000 personas.');
-    return this.save({date,title,source:`Asistentes de ${sourceDates.join(' y ')}. Confirmando presente en al menos una fecha.`,people:result.people,attendance:{}});
+    return this.save({date,title,source:`Asistentes de ${sourceDates.join(' y ')}. Grupos distintos con numeración nueva.`,people:result.people,attendance:{}});
   }
   reorder({date,ids}) {
     const list=this.get(date),byId=new Map(list.people.map(p=>[p.id,p]));
